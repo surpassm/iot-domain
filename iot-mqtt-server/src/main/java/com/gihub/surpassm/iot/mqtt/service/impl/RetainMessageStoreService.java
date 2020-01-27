@@ -40,7 +40,7 @@ public class RetainMessageStoreService implements IRetainMessageStoreService {
 
 	@Override
 	public List<RetainMessageStore> search(String topicFilter) {
-		List<RetainMessageStore> retainMessageStores = new ArrayList<RetainMessageStore>();
+		List<RetainMessageStore> retainMessageStores = new ArrayList<>();
 		if (!StrUtil.contains(topicFilter, '#') && !StrUtil.contains(topicFilter, '+')) {
 			if (retainMessageCache.containsKey(topicFilter)) {
 				retainMessageStores.add(retainMessageCache.get(topicFilter));

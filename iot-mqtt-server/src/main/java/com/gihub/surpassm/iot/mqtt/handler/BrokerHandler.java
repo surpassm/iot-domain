@@ -27,6 +27,12 @@ public class BrokerHandler extends SimpleChannelInboundHandler<MqttMessage> {
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, MqttMessage msg) throws Exception {
+		//通过判断消息的固定头部是否为空，如果空;则通过processDisconnect(ctx)将设备连接关闭
+		if (msg.fixedHeader() == null){
+			processDisconnect(ctx);
+			return;
+		}
+		//通过判断固定头部的MQTT消息类型,针对不同消息做相应的处理
 		switch (msg.fixedHeader().messageType()) {
 			case CONNECT:
 				protocolProcess.connect().processConnect(ctx.channel(), (MqttConnectMessage) msg);
@@ -100,5 +106,9 @@ public class BrokerHandler extends SimpleChannelInboundHandler<MqttMessage> {
 		} else {
 			super.userEventTriggered(ctx, evt);
 		}
+	}
+
+	private void processDisconnect(ChannelHandlerContext ctx) {
+		ctx.close();
 	}
 }

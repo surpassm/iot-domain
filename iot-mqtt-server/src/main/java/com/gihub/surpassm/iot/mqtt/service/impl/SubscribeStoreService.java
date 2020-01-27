@@ -98,7 +98,7 @@ public class SubscribeStoreService implements ISubscribeStoreService {
 
 	@Override
 	public List<SubscribeStore> search(String topic) {
-		List<SubscribeStore> subscribeStores = new ArrayList<SubscribeStore>();
+		List<SubscribeStore> subscribeStores = new ArrayList<>();
 		if (subscribeNotWildcardCache.containsKey(topic)) {
 			ConcurrentHashMap<String, SubscribeStore> map = subscribeNotWildcardCache.get(topic);
 			Collection<SubscribeStore> collection = map.values();

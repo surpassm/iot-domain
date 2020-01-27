@@ -80,7 +80,7 @@ public class EventLoopGroupConfig {
 		// Ignite日志
 		Logger logger = LoggerFactory.getLogger("org.apache.ignite");
 		igniteConfiguration.setGridLogger(new Slf4jLogger(logger));
-		// 非持久化数据区域
+		// 非持久化数据区域subscribeNotWildcardCache
 		DataRegionConfiguration notPersistence = new DataRegionConfiguration().setPersistenceEnabled(false)
 				.setInitialSize(igniteProperties.getNotPersistenceInitialSize() * 1024 * 1024)
 				.setMaxSize(igniteProperties.getNotPersistenceMaxSize() * 1024 * 1024).setName("not-persistence-data-region");

@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class SessionStoreService implements ISessionStoreService {
 
-	private Map<String, SessionStore> sessionCache = new ConcurrentHashMap<String, SessionStore>();
+	private Map<String, SessionStore> sessionCache = new ConcurrentHashMap<>();
 
 	@Override
 	public void put(String clientId, SessionStore sessionStore) {
