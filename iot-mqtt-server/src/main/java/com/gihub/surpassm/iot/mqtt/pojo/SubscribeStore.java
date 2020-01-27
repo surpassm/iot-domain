@@ -9,8 +9,6 @@ import java.io.Serializable;
  */
 public class SubscribeStore implements Serializable {
 
-	private static final long serialVersionUID = 1276156087085594264L;
-
 	private String clientId;
 
 	private String topicFilter;

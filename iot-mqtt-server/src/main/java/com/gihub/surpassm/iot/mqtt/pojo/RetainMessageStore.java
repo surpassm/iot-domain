@@ -9,8 +9,6 @@ import java.io.Serializable;
  */
 public class RetainMessageStore implements Serializable {
 
-	private static final long serialVersionUID = -7548204047370972779L;
-
 	private String topic;
 
 	private byte[] messageBytes;

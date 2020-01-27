@@ -9,8 +9,6 @@ import java.io.Serializable;
  */
 public class DupPublishMessageStore implements Serializable {
 
-	private static final long serialVersionUID = -8112511377194421600L;
-
 	private String clientId;
 
 	private String topic;

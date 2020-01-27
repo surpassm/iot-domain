@@ -14,8 +14,6 @@ import java.io.Serializable;
  */
 public class SessionStore implements Serializable {
 
-	private static final long serialVersionUID = 5209539791996944490L;
-
 	private String clientId;
 
 	private Channel channel;
