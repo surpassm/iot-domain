@@ -1,0 +1,49 @@
+spring:
+  profiles:
+    active: dev
+
+---
+# 开发环境配置
+spring:
+  profiles: dev
+  mqtt:
+    server:
+      id: mqtt-broker-01
+      # 端口号
+      tcp-port: 9000
+      # 心跳时间(秒)
+      keep-alive: 60
+      # 开启Epoll模式, linux下建议开启
+      is-epoll: false
+      # 开启组播方式集群
+      enable-multicast-group: true
+      # 组播地址
+      multicast-group: 239.255.255.255
+---
+# 生产环境
+spring:
+  profiles: prod
+  mqtt:
+    server:
+      id: mqtt-broker-01
+      # 端口号
+      tcp-port: 9000
+      # 心跳时间(秒)
+      keep-alive: 60
+      # 开启Epoll模式, linux下建议开启
+      is-epoll: false
+      # 开启组播方式集群
+      enable-multicast-group: false
+      # 静态IP方式集群
+      static-ip-addresses: 192.168.1.240, 192.168.1.241
+      cache:
+        # 持久化缓存内存初始化大小(MB)
+        persistence-initial-size: 64
+        # 持久化缓存占用内存最大值(MB)
+        persistence-max-size: 128
+        # 非持久化缓存内存初始化大小(MB)
+        not-persistence-initial-size: 64
+        # 非持久化缓存占用内存最大值(MB)
+        not-persistence-max-size: 128
+        # 持久化磁盘存储路径
+        persistence-store-path: /opt/mqtt-broker/persistence
