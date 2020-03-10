@@ -22,7 +22,7 @@
         <spring-cloud.version>Hoxton.SR3</spring-cloud.version>
         <spring-boot-alibaba-druid.version>1.1.10</spring-boot-alibaba-druid.version>
 
-        <hutool.version>5.1.1</hutool.version>
+        <hutool.version>5.2.1</hutool.version>
         <ignite.version>2.7.6</ignite.version>
     </properties>
 
@@ -53,12 +53,6 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid-spring-boot-starter</artifactId>
                 <version>${spring-boot-alibaba-druid.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <optional>true</optional>
             </dependency>
 
 
