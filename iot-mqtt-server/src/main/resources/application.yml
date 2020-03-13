@@ -10,7 +10,7 @@ spring:
     server:
       id: mqtt-broker-01
       # 端口号
-      tcp-port: 9000
+      tcp-port: 9001
       # 心跳时间(秒)
       keep-alive: 60
       # 开启Epoll模式, linux下建议开启

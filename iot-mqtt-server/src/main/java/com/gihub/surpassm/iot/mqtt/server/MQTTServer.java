@@ -30,6 +30,7 @@ import java.security.KeyStore;
  * Create date 2020/1/27 12:06
  * Version 1.0
  * Description
+ * 整体服务启动初始类
  */
 @Slf4j
 @Service
@@ -89,7 +90,7 @@ public class MQTTServer {
 				.option(ChannelOption.SO_SNDBUF, serverConfig.getSoSendBuf())
 				//设置接收缓冲大小
 				.option(ChannelOption.SO_RCVBUF, serverConfig.getSoReceiveBuf())
-				//保持连接
+				//保持连接 是否开启心跳保活机制, 默认开启
 				.childOption(ChannelOption.SO_KEEPALIVE, serverConfig.isSoKeepAlive())
 				;
 		//内存泄漏检测 开发推荐PARANOID 线上SIMPLE
