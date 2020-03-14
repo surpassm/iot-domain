@@ -34,42 +34,42 @@ public class BrokerHandler extends SimpleChannelInboundHandler<MqttMessage> {
 		}
 		//通过判断固定头部的MQTT消息类型,针对不同消息做相应的处理
 		switch (msg.fixedHeader().messageType()) {
-			case CONNECT:
+			case CONNECT://1客户端请求连接到服务器
 				protocolProcess.connect().processConnect(ctx.channel(), (MqttConnectMessage) msg);
 				break;
-			case CONNACK:
+			case CONNACK://2连接确认
 				break;
-			case PUBLISH:
+			case PUBLISH://3发布讯息
 				protocolProcess.publish().processPublish(ctx.channel(), (MqttPublishMessage) msg);
 				break;
-			case PUBACK:
+			case PUBACK://4发布确认
 				protocolProcess.pubAck().processPubAck(ctx.channel(), (MqttMessageIdVariableHeader) msg.variableHeader());
 				break;
-			case PUBREC:
+			case PUBREC://5发布已收到（保证交付部分1）
 				protocolProcess.pubRec().processPubRec(ctx.channel(), (MqttMessageIdVariableHeader) msg.variableHeader());
 				break;
-			case PUBREL:
+			case PUBREL://6发布发布（确保交付的第2部分）
 				protocolProcess.pubRel().processPubRel(ctx.channel(), (MqttMessageIdVariableHeader) msg.variableHeader());
 				break;
-			case PUBCOMP:
+			case PUBCOMP://7发布完成（保证交付的第3部分）
 				protocolProcess.pubComp().processPubComp(ctx.channel(), (MqttMessageIdVariableHeader) msg.variableHeader());
 				break;
-			case SUBSCRIBE:
+			case SUBSCRIBE://8客户订阅请求
 				protocolProcess.subscribe().processSubscribe(ctx.channel(), (MqttSubscribeMessage) msg);
 				break;
-			case SUBACK:
+			case SUBACK://9订阅确认
 				break;
-			case UNSUBSCRIBE:
+			case UNSUBSCRIBE://10客户退订请求
 				protocolProcess.unSubscribe().processUnSubscribe(ctx.channel(), (MqttUnsubscribeMessage) msg);
 				break;
-			case UNSUBACK:
+			case UNSUBACK://11退订确认
 				break;
-			case PINGREQ:
+			case PINGREQ://12PING请求
 				protocolProcess.pingReq().processPingReq(ctx.channel(), msg);
 				break;
-			case PINGRESP:
+			case PINGRESP://13PING回应
 				break;
-			case DISCONNECT:
+			case DISCONNECT://14客户端正在断开连接
 				protocolProcess.disConnect().processDisConnect(ctx.channel(), msg);
 				break;
 			default:

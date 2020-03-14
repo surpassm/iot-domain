@@ -7,11 +7,9 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollServerSocketChannel;
-import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.util.ResourceLeakDetector;
 import io.netty.util.concurrent.EventExecutorGroup;
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +19,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
-import javax.net.ssl.KeyManagerFactory;
-import java.io.InputStream;
-import java.security.KeyStore;
 
 /**
  * @author mc
@@ -43,7 +38,7 @@ public class MQTTServer {
 	private MQTTConfig.MQTTServerConfig serverConfig;
 
 	@Resource
-	private MQTTServerChannelInit MQTTServerChannelInit;
+	private MQTTServerChannelInit mqttServerChannelInit;
 
 	private Channel channel;
 
@@ -83,7 +78,7 @@ public class MQTTServer {
 				// handler在初始化时就会执行
 				.handler(new LoggingHandler(LogLevel.INFO))
 				// childHandler会在客户端成功connect后才执行
-				.childHandler(MQTTServerChannelInit)
+				.childHandler(mqttServerChannelInit)
 				//服务端可连接队列数,对应TCP/IP协议listen函数中SO_BACKLOG参数
 				.option(ChannelOption.SO_BACKLOG, serverConfig.getSoBackLog())
 				//设置发送缓冲大小
