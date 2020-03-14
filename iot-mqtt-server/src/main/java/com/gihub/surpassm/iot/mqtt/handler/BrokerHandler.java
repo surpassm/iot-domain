@@ -32,44 +32,63 @@ public class BrokerHandler extends SimpleChannelInboundHandler<MqttMessage> {
 			processDisconnect(ctx);
 			return;
 		}
+		/**
+		 * 名字		值	报文流动方向		描述
+		 * Reserved	0	禁止			保留
+		 * CONNECT	1	客户端到服务端	客户端请求连接服务端
+		 * CONNACK	2	服务端到客户端	连接报文确认
+		 * PUBLISH	3	两个方向都允许	发布消息
+		 * PUBACK	4	两个方向都允许	QoS 1消息发布收到确认
+		 * PUBREC	5	两个方向都允许	发布收到（保证交付第一步）
+		 * PUBREL	6	两个方向都允许	发布释放（保证交付第二步）
+		 * PUBCOMP	7	两个方向都允许	QoS 2消息发布完成（保证交互第三步）
+		 * SUBSCRIBE	8	客户端到服务端	客户端订阅请求
+		 * SUBACK	9	服务端到客户端	订阅请求报文确认
+		 * UNSUBSCRIBE	10	客户端到服务端	客户端取消订阅请求
+		 * UNSUBACK	11	服务端到客户端	取消订阅报文确认
+		 * PINGREQ	12	客户端到服务端	心跳请求
+		 * PINGRESP	13	服务端到客户端	心跳响应
+		 * DISCONNECT	14	客户端到服务端	客户端断开连接
+		 * Reserved	15	禁止	保留
+		 * */
 		//通过判断固定头部的MQTT消息类型,针对不同消息做相应的处理
 		switch (msg.fixedHeader().messageType()) {
-			case CONNECT://1客户端请求连接到服务器
+			case CONNECT:
 				protocolProcess.connect().processConnect(ctx.channel(), (MqttConnectMessage) msg);
 				break;
-			case CONNACK://2连接确认
+			case CONNACK:
 				break;
-			case PUBLISH://3发布讯息
+			case PUBLISH:
 				protocolProcess.publish().processPublish(ctx.channel(), (MqttPublishMessage) msg);
 				break;
-			case PUBACK://4发布确认
+			case PUBACK:
 				protocolProcess.pubAck().processPubAck(ctx.channel(), (MqttMessageIdVariableHeader) msg.variableHeader());
 				break;
-			case PUBREC://5发布已收到（保证交付部分1）
+			case PUBREC:
 				protocolProcess.pubRec().processPubRec(ctx.channel(), (MqttMessageIdVariableHeader) msg.variableHeader());
 				break;
-			case PUBREL://6发布发布（确保交付的第2部分）
+			case PUBREL:
 				protocolProcess.pubRel().processPubRel(ctx.channel(), (MqttMessageIdVariableHeader) msg.variableHeader());
 				break;
-			case PUBCOMP://7发布完成（保证交付的第3部分）
+			case PUBCOMP:
 				protocolProcess.pubComp().processPubComp(ctx.channel(), (MqttMessageIdVariableHeader) msg.variableHeader());
 				break;
-			case SUBSCRIBE://8客户订阅请求
+			case SUBSCRIBE:
 				protocolProcess.subscribe().processSubscribe(ctx.channel(), (MqttSubscribeMessage) msg);
 				break;
-			case SUBACK://9订阅确认
+			case SUBACK:
 				break;
-			case UNSUBSCRIBE://10客户退订请求
+			case UNSUBSCRIBE:
 				protocolProcess.unSubscribe().processUnSubscribe(ctx.channel(), (MqttUnsubscribeMessage) msg);
 				break;
-			case UNSUBACK://11退订确认
+			case UNSUBACK:
 				break;
-			case PINGREQ://12PING请求
+			case PINGREQ:
 				protocolProcess.pingReq().processPingReq(ctx.channel(), msg);
 				break;
-			case PINGRESP://13PING回应
+			case PINGRESP:
 				break;
-			case DISCONNECT://14客户端正在断开连接
+			case DISCONNECT:
 				protocolProcess.disConnect().processDisConnect(ctx.channel(), msg);
 				break;
 			default:
