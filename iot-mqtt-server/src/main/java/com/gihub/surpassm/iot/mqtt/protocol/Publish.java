@@ -43,6 +43,13 @@ public class Publish {
 		this.internalCommunication = internalCommunication;
 	}
 
+	/**
+	 * 	QoS值	Bit 2	Bit 1	描述
+	 * 	0		0		0	最多分发一次
+	 * 	1		0		1	至少分发一次
+	 * 	2		1		0	只分发一次
+	 * 	-		1		1	保留位
+	 */
 	public void processPublish(Channel channel, MqttPublishMessage msg) {
 		// QoS=0
 		if (msg.fixedHeader().qosLevel() == MqttQoS.AT_MOST_ONCE) {
