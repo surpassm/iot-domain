@@ -13,7 +13,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>iot-dependencies</name>
     <packaging>pom</packaging>
-    <description>Demo project for Spring Boot</description>
+    <description>物联网父级依赖</description>
 
 
     <properties>
