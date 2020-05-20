@@ -9,7 +9,7 @@
     </parent>
     <artifactId>iot-gateway</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>iot-gateway</name>
+    <name>${project.artifactId}</name>
     <description>物联对外提供服务的网关</description>
 
     <dependencies>

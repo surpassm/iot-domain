@@ -11,7 +11,7 @@
     <groupId>com.github.surpassm.iot</groupId>
     <artifactId>iot-domain</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>iot-domain</name>
+    <name>${project.artifactId}</name>
     <packaging>pom</packaging>
     <description>物联网父级依赖</description>
 

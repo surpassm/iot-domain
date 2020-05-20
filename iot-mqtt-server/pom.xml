@@ -8,7 +8,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>iot-mqtt-server</artifactId>
-    <name>iot-mqtt-server</name>
+    <name>${project.artifactId}</name>
     <description>MQTT代理服务器</description>
 
 
