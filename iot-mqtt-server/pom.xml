@@ -4,9 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.github.surpassm.iot</groupId>
-        <artifactId>iot-dependencies</artifactId>
+        <artifactId>iot-domain</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../iot-dependencies/pom.xml</relativePath>
     </parent>
     <artifactId>iot-mqtt-server</artifactId>
     <name>iot-mqtt-server</name>

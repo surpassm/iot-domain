@@ -3,10 +3,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>iot-dependencies</artifactId>
         <groupId>com.github.surpassm.iot</groupId>
+        <artifactId>iot-domain</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../iot-dependencies/pom.xml</relativePath>
     </parent>
     <artifactId>iot-gateway</artifactId>
     <version>0.0.1-SNAPSHOT</version>

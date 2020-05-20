@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.github.surpassm.iot</groupId>
-    <artifactId>iot-dependencies</artifactId>
+    <artifactId>iot-domain</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>iot-dependencies</name>
+    <name>iot-domain</name>
     <packaging>pom</packaging>
     <description>物联网父级依赖</description>
 
@@ -27,8 +27,8 @@
     </properties>
 
     <modules>
-        <module>../iot-gateway</module>
-        <module>../iot-mqtt-server</module>
+        <module>iot-gateway</module>
+        <module>iot-mqtt-server</module>
 
     </modules>
 
