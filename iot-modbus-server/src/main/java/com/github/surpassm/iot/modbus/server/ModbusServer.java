@@ -74,6 +74,7 @@ public class ModbusServer {
 		workerGroup.shutdownGracefully().syncUninterruptibly();
 		businessGroup.shutdownGracefully().syncUninterruptibly();
 		channel.closeFuture().syncUninterruptibly();
+		clientChannels.close().awaitUninterruptibly();
 		channel = null;
 		log.info("TCP服务关闭成功");
 	}
