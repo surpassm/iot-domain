@@ -1,0 +1,30 @@
+
+spring:
+  profiles:
+    active: dev
+
+---
+# 开发环境配置
+spring:
+  profiles: dev
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+    sentinel:
+      transport:
+        dashboard: localhost:8080
+        port: 8721
+  modbus:
+    server:
+      id: modbus-broker-01
+      # 端口号
+      tcp-port: 9002
+      # 心跳时间(秒)
+      keep-alive: 60
+      # 开启Epoll模式, linux下建议开启
+      is-epoll: false
+      # 开启组播方式集群
+      enable-multicast-group: true
+      # 组播地址
+      multicast-group: 239.255.255.255
