@@ -47,10 +47,9 @@ public class ModbusServer {
 	@Resource
 	private ModbusConfig.ModbusServerConfig serverConfig;
 
-	@Resource
-	private ModbusServerChannelInit modbusServerChannelInit;
-
 	private Channel channel;
+
+	private Channel parentChannel;
 
 	public ModbusServer(@Qualifier("businessGroup") EventExecutorGroup businessGroup,
 						@Qualifier("workerGroup") EventLoopGroup workerGroup,
@@ -62,7 +61,7 @@ public class ModbusServer {
 
 	@PostConstruct
 	public void start() throws InterruptedException {
-		modbusServer(new ModbusRequestHandlerExample());
+		modbusServer();
 	}
 
 	/**
@@ -82,7 +81,8 @@ public class ModbusServer {
 	/**
 	 * MQTT服务配置
 	 */
-	private void modbusServer(ModbusRequestHandler handler) throws InterruptedException {
+	private void modbusServer() throws InterruptedException {
+		ModbusRequestHandlerExample handler = new ModbusRequestHandlerExample();
 		handler.setServer(this);
 		ServerBootstrap serverBootstrap = new ServerBootstrap();
 		serverBootstrap.group(bossGroup, workerGroup)
@@ -90,7 +90,7 @@ public class ModbusServer {
 				// handler在初始化时就会执行
 				.handler(new LoggingHandler(LogLevel.INFO))
 				// childHandler会在客户端成功connect后才执行
-				.childHandler(modbusServerChannelInit)
+				.childHandler(new ModbusServerChannelInit(handler))
 				//服务端可连接队列数,对应TCP/IP协议listen函数中SO_BACKLOG参数
 				.option(ChannelOption.SO_BACKLOG, serverConfig.getSoBackLog())
 				//设置发送缓冲大小
@@ -104,8 +104,8 @@ public class ModbusServer {
 		ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.SIMPLE);
 		ChannelFuture future = serverBootstrap.bind(serverConfig.getTcpPort()).sync();
 		setConnectionState(CONNECTION_STATES.listening);
-
-		channel.closeFuture().addListener(new GenericFutureListener<ChannelFuture>() {
+		parentChannel = future.channel();
+		parentChannel.closeFuture().addListener(new GenericFutureListener<ChannelFuture>() {
 			@Override
 			public void operationComplete(ChannelFuture future) throws Exception {
 				workerGroup.shutdownGracefully();
@@ -117,6 +117,8 @@ public class ModbusServer {
 		if (future.isSuccess()) {
 			log.info("TCP服务启动完毕,port={}", serverConfig.getTcpPort());
 			channel = future.channel();
+
+
 		}
 	}
 

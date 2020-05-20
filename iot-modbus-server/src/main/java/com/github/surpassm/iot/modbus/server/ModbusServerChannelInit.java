@@ -29,7 +29,6 @@ import java.util.concurrent.TimeUnit;
  * Version 1.0
  * Description ModbusChannelInitializer
  */
-@Component
 public class ModbusServerChannelInit extends ChannelInitializer<SocketChannel> {
 
     @Resource
