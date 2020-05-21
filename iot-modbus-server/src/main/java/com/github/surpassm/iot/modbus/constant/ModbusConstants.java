@@ -20,7 +20,7 @@ public class ModbusConstants {
     /**
      * LengthFieldBasedFrameDecoder : maxFrameLength 发送的数据帧最大长度
      */
-    public static final int MAX_FRAME_LENGTH = 260;
+    public static final int MAX_FRAME_LENGTH = 56326;
     /**
      * LengthFieldBasedFrameDecoder : lengthFieldOffset
      * 定义长度域位于发送的字节数组中的下标。换句话说：发送的字节数组中下标为${lengthFieldOffset}的地方是长度域的开始地方

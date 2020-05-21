@@ -15,7 +15,10 @@ import io.netty.util.AttributeKey;
 import java.io.IOException;
 
 /**
- * MQTT消息处理
+ * @author mc
+ * Create date 2020/5/21 9:43
+ * Version 1.0
+ * Description MQTT消息处理
  */
 public class BrokerHandler extends SimpleChannelInboundHandler<MqttMessage> {
 

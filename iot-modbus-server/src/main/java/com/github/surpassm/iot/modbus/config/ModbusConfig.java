@@ -7,8 +7,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * netty配置信息
- * @author Administrator
+ * @author mc
+ * Create date 2020/5/21 9:43
+ * Version 1.0
+ * Description  netty配置信息
  */
 public class ModbusConfig {
 

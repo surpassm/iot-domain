@@ -21,11 +21,6 @@ public class ModbusFrame {
         return function;
     }
 
-    /**
-     * 核心解码逻辑
-     *
-     * @return ByteBuf 传递给下一个channel
-     */
     public ByteBuf encode() {
         ByteBuf buf = Unpooled.buffer();
         buf.writeBytes(header.encode());

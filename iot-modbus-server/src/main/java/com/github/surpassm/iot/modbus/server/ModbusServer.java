@@ -1,8 +1,8 @@
 package com.github.surpassm.iot.modbus.server;
 
 import com.github.surpassm.iot.modbus.config.ModbusConfig;
+import com.github.surpassm.iot.modbus.config.ThreadConfig;
 import com.github.surpassm.iot.modbus.example.ModbusRequestHandlerExample;
-import com.github.surpassm.iot.modbus.handler.ModbusRequestHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
-import java.beans.PropertyChangeSupport;
 
 /**
  * @author mc
@@ -37,117 +36,119 @@ import java.beans.PropertyChangeSupport;
 @Slf4j
 @Service
 public class ModbusServer {
-	private final EventLoopGroup bossGroup;
-	private final EventLoopGroup workerGroup;
-	private final EventExecutorGroup businessGroup;
+    private final EventLoopGroup bossGroup;
+    private final EventLoopGroup workerGroup;
+    private final EventExecutorGroup businessGroup;
 
-	private final ChannelGroup clientChannels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
-	private CONNECTION_STATES connectionState = CONNECTION_STATES.down;
+    private final ChannelGroup clientChannels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+    private CONNECTION_STATES connectionState = CONNECTION_STATES.down;
 
-	@Resource
-	private ModbusConfig.ModbusServerConfig serverConfig;
-
-	private Channel channel;
-
-	private Channel parentChannel;
-
-	public ModbusServer(@Qualifier("businessGroup") EventExecutorGroup businessGroup,
-						@Qualifier("workerGroup") EventLoopGroup workerGroup,
-						@Qualifier("bossGroup") EventLoopGroup bossGroup) {
-		this.businessGroup = businessGroup;
-		this.workerGroup = workerGroup;
-		this.bossGroup = bossGroup;
-	}
-
-	@PostConstruct
-	public void start() throws InterruptedException {
-		modbusServer();
-	}
-
-	/**
-	 * 销毁资源
-	 */
-	@PreDestroy
-	public void stop() {
-		bossGroup.shutdownGracefully().syncUninterruptibly();
-		workerGroup.shutdownGracefully().syncUninterruptibly();
-		businessGroup.shutdownGracefully().syncUninterruptibly();
-		channel.closeFuture().syncUninterruptibly();
-		clientChannels.close().awaitUninterruptibly();
-		channel = null;
-		log.info("TCP服务关闭成功");
-	}
-
-	/**
-	 * MQTT服务配置
-	 */
-	private void modbusServer() throws InterruptedException {
-		ModbusRequestHandlerExample handler = new ModbusRequestHandlerExample();
-		handler.setServer(this);
-		ServerBootstrap serverBootstrap = new ServerBootstrap();
-		serverBootstrap.group(bossGroup, workerGroup)
-				.channel(serverConfig.isEpoll()? EpollServerSocketChannel.class : NioServerSocketChannel.class)
-				// handler在初始化时就会执行
-				.handler(new LoggingHandler(LogLevel.INFO))
-				// childHandler会在客户端成功connect后才执行
-				.childHandler(new ModbusServerChannelInit(handler))
-				//服务端可连接队列数,对应TCP/IP协议listen函数中SO_BACKLOG参数
-				.option(ChannelOption.SO_BACKLOG, serverConfig.getSoBackLog())
-				//设置发送缓冲大小
-				.option(ChannelOption.SO_SNDBUF, serverConfig.getSoSendBuf())
-				//设置接收缓冲大小
-				.option(ChannelOption.SO_RCVBUF, serverConfig.getSoReceiveBuf())
-				//保持连接 是否开启心跳保活机制, 默认开启
-				.childOption(ChannelOption.SO_KEEPALIVE, serverConfig.isSoKeepAlive())
-				;
-		//内存泄漏检测 开发推荐PARANOID 线上SIMPLE
-		ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.SIMPLE);
-		ChannelFuture future = serverBootstrap.bind(serverConfig.getTcpPort()).sync();
-		setConnectionState(CONNECTION_STATES.listening);
-		parentChannel = future.channel();
-		parentChannel.closeFuture().addListener(new GenericFutureListener<ChannelFuture>() {
-			@Override
-			public void operationComplete(ChannelFuture future) throws Exception {
-				workerGroup.shutdownGracefully();
-				bossGroup.shutdownGracefully();
-				setConnectionState(CONNECTION_STATES.down);
-			}
-		});
-
-		if (future.isSuccess()) {
-			log.info("TCP服务启动完毕,port={}", serverConfig.getTcpPort());
-			channel = future.channel();
+    @Resource
+    private ModbusConfig.ModbusServerConfig serverConfig;
+    @Resource
+    private ThreadConfig threadConfig;
 
 
-		}
-	}
+    private Channel channel;
+
+    private Channel parentChannel;
+
+    public ModbusServer(@Qualifier("businessGroup") EventExecutorGroup businessGroup,
+                        @Qualifier("workerGroup") EventLoopGroup workerGroup,
+                        @Qualifier("bossGroup") EventLoopGroup bossGroup) {
+        this.businessGroup = businessGroup;
+        this.workerGroup = workerGroup;
+        this.bossGroup = bossGroup;
+    }
+
+    @PostConstruct
+    public void start() throws InterruptedException {
+        modbusServer();
+    }
+
+    /**
+     * 销毁资源
+     */
+    @PreDestroy
+    public void stop() {
+        bossGroup.shutdownGracefully().syncUninterruptibly();
+        workerGroup.shutdownGracefully().syncUninterruptibly();
+        businessGroup.shutdownGracefully().syncUninterruptibly();
+        channel.closeFuture().syncUninterruptibly();
+        clientChannels.close().awaitUninterruptibly();
+        channel = null;
+        log.info("TCP服务关闭成功");
+    }
+
+    /**
+     * MQTT服务配置
+     */
+    private void modbusServer() throws InterruptedException {
+        ModbusRequestHandlerExample handler = new ModbusRequestHandlerExample();
+        handler.setServer(this, threadConfig);
+        ServerBootstrap serverBootstrap = new ServerBootstrap();
+        serverBootstrap.group(bossGroup, workerGroup)
+                .channel(serverConfig.isEpoll() ? EpollServerSocketChannel.class : NioServerSocketChannel.class)
+                // handler在初始化时就会执行
+                .handler(new LoggingHandler(LogLevel.INFO))
+                // childHandler会在客户端成功connect后才执行
+                .childHandler(new ModbusServerChannelInit(handler))
+                //服务端可连接队列数,对应TCP/IP协议listen函数中SO_BACKLOG参数
+                .option(ChannelOption.SO_BACKLOG, serverConfig.getSoBackLog())
+                //设置发送缓冲大小
+                .option(ChannelOption.SO_SNDBUF, serverConfig.getSoSendBuf())
+                //设置接收缓冲大小
+                .option(ChannelOption.SO_RCVBUF, serverConfig.getSoReceiveBuf())
+                //保持连接 是否开启心跳保活机制, 默认开启
+                .childOption(ChannelOption.SO_KEEPALIVE, serverConfig.isSoKeepAlive())
+        ;
+        //内存泄漏检测 开发推荐PARANOID 线上SIMPLE
+        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.SIMPLE);
+        ChannelFuture future = serverBootstrap.bind(serverConfig.getTcpPort()).sync();
+        setConnectionState(CONNECTION_STATES.listening);
+        parentChannel = future.channel();
+        parentChannel.closeFuture().addListener(new GenericFutureListener<ChannelFuture>() {
+            @Override
+            public void operationComplete(ChannelFuture future) throws Exception {
+                workerGroup.shutdownGracefully();
+                bossGroup.shutdownGracefully();
+                setConnectionState(CONNECTION_STATES.down);
+            }
+        });
+
+        if (future.isSuccess()) {
+            log.info("TCP服务启动完毕,port={}", serverConfig.getTcpPort());
+            channel = future.channel();
 
 
-	public void setConnectionState(CONNECTION_STATES connectionState) {
-		this.connectionState = connectionState;
-	}
+        }
+    }
 
 
-	public void close() {
-		if (channel != null) {
-			channel.close().awaitUninterruptibly();
-		}
-		clientChannels.close().awaitUninterruptibly();
-	}
-
-	public void addClient(Channel channel) {
-		clientChannels.add(channel);
-		setConnectionState(CONNECTION_STATES.clientsConnected);
-	}
-
-	public void removeClient(Channel channel) {
-		clientChannels.remove(channel);
-		setConnectionState(CONNECTION_STATES.clientsConnected);
-	}
+    public void setConnectionState(CONNECTION_STATES connectionState) {
+        this.connectionState = connectionState;
+    }
 
 
+    public void close() {
+        if (channel != null) {
+            channel.close().awaitUninterruptibly();
+        }
+        clientChannels.close().awaitUninterruptibly();
+    }
 
-	public static enum CONNECTION_STATES {
-		listening, down, clientsConnected
-	}
+    public void addClient(Channel channel) {
+        clientChannels.add(channel);
+        setConnectionState(CONNECTION_STATES.clientsConnected);
+    }
+
+    public void removeClient(Channel channel) {
+        clientChannels.remove(channel);
+        setConnectionState(CONNECTION_STATES.clientsConnected);
+    }
+
+
+    public static enum CONNECTION_STATES {
+        listening, down, clientsConnected
+    }
 }

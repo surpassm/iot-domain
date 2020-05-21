@@ -1,5 +1,6 @@
 package com.github.surpassm.iot.modbus.handler;
 
+import com.github.surpassm.iot.modbus.config.ThreadConfig;
 import com.github.surpassm.iot.modbus.func.WriteSingleCoil;
 import com.github.surpassm.iot.modbus.func.WriteSingleRegister;
 import com.github.surpassm.iot.modbus.func.request.*;
@@ -8,6 +9,7 @@ import com.github.surpassm.iot.modbus.pojo.ModbusFrame;
 import com.github.surpassm.iot.modbus.pojo.ModbusFunction;
 import com.github.surpassm.iot.modbus.pojo.ModbusHeader;
 import com.github.surpassm.iot.modbus.server.ModbusServer;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -19,10 +21,13 @@ public abstract class ModbusRequestHandler extends SimpleChannelInboundHandler<M
 
     private static final Logger logger = Logger.getLogger(ModbusRequestHandler.class.getSimpleName());
     private ModbusServer server;
+    private ThreadConfig threadConfig;
 
-    public void setServer(ModbusServer server) {
+    public void setServer(ModbusServer server, ThreadConfig threadConfig) {
         this.server = server;
+        this.threadConfig = threadConfig;
     }
+
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
@@ -34,9 +39,28 @@ public abstract class ModbusRequestHandler extends SimpleChannelInboundHandler<M
         server.removeClient(ctx.channel());
     }
 
+    private static byte[] bytes = {(byte) 0xf8, 0x04, 0x00, 0x00, 0x00, 0x0a, 0x64, 0x64};
+
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         server.addClient(ctx.channel());
+//        threadConfig.getAsyncExecutor().execute(() -> {
+//            while (true) {
+//                try {
+//                    Thread.sleep(1000 * 3);
+//                    ctx.writeAndFlush(Unpooled.copiedBuffer(bytes)).addListener(i -> {
+//                        if (!i.isSuccess()) {
+//                            ctx.channel().close();
+//                            ctx.close();
+//                        }
+//                    });
+//                } catch (InterruptedException e) {
+//                    ctx.channel().close();
+//                    ctx.close();
+//                    break;
+//                }
+//            }
+//        });
     }
 
     @Override

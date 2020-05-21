@@ -8,10 +8,21 @@ import io.netty.buffer.Unpooled;
  * @author ares
  */
 public class ModbusHeader {
-
+    /**
+     * 报文头->事务标识符 Transaction Identifier
+     */
     private final int transactionIdentifier;
+    /**
+     * 报文头->协议标识符 Protocol Identifier
+     */
     private final int protocolIdentifier;
+    /**
+     * 报文头->长度
+     */
     private final int length;
+    /**
+     * 报文头->单位符
+     */
     private final short unitIdentifier;
 
     public ModbusHeader(int transactionIdentifier, int protocolIdentifier, int pduLength, short unitIdentifier) {
