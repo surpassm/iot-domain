@@ -30,7 +30,7 @@
         <module>iot-gateway</module>
         <module>iot-mqtt-server</module>
         <module>iot-modbus-server</module>
-
+        <module>iot-driver</module>
     </modules>
 
     <dependencyManagement>
