@@ -1,5 +1,7 @@
 
 spring:
+  application:
+    name: iot-modbus
   profiles:
     active: dev
 

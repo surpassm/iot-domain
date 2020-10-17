@@ -21,8 +21,6 @@ public class EventLoopGroupConfig {
 
 	@Resource
 	private ModbusConfig.ModbusServerConfig serverConfig;
-	@Resource
-	private ModbusConfig.IgniteProperties igniteProperties;
 
 	/**
 	 * 负责TCP连接建立操作 绝对不能阻塞
