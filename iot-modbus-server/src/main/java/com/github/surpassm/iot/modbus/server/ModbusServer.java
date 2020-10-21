@@ -3,6 +3,8 @@ package com.github.surpassm.iot.modbus.server;
 import com.github.surpassm.iot.modbus.config.ModbusConfig;
 import com.github.surpassm.iot.modbus.config.ThreadConfig;
 import com.github.surpassm.iot.modbus.example.ModbusRequestHandlerExample;
+import com.github.surpassm.iot.modbus.pojo.SessionStore;
+import com.github.surpassm.iot.modbus.service.SessionStoreService;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -47,6 +49,8 @@ public class ModbusServer {
     private ModbusConfig.ModbusServerConfig serverConfig;
     @Resource
     private ThreadConfig threadConfig;
+    @Resource
+    private SessionStoreService sessionStoreService;
 
 
     private Channel channel;
@@ -85,7 +89,7 @@ public class ModbusServer {
      */
     private void modbusServer() throws InterruptedException {
         ModbusRequestHandlerExample handler = new ModbusRequestHandlerExample();
-        handler.setServer(this, threadConfig);
+        handler.setServer(this, threadConfig, sessionStoreService);
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         serverBootstrap.group(bossGroup, workerGroup)
                 .channel(serverConfig.isEpoll() ? EpollServerSocketChannel.class : NioServerSocketChannel.class)
@@ -149,6 +153,17 @@ public class ModbusServer {
 
 
     public static enum CONNECTION_STATES {
-        listening, down, clientsConnected
+        /**
+         * 监听
+         */
+        listening,
+        /**
+         * 断开连接
+         */
+        down,
+        /**
+         * 已连接客户端
+         */
+        clientsConnected
     }
 }

@@ -8,7 +8,9 @@ import com.github.surpassm.iot.modbus.func.response.*;
 import com.github.surpassm.iot.modbus.pojo.ModbusFrame;
 import com.github.surpassm.iot.modbus.pojo.ModbusFunction;
 import com.github.surpassm.iot.modbus.pojo.ModbusHeader;
+import com.github.surpassm.iot.modbus.pojo.SessionStore;
 import com.github.surpassm.iot.modbus.server.ModbusServer;
+import com.github.surpassm.iot.modbus.service.SessionStoreService;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -22,10 +24,12 @@ public abstract class ModbusRequestHandler extends SimpleChannelInboundHandler<M
     private static final Logger logger = Logger.getLogger(ModbusRequestHandler.class.getSimpleName());
     private ModbusServer server;
     private ThreadConfig threadConfig;
+    private SessionStoreService sessionStoreService;
 
-    public void setServer(ModbusServer server, ThreadConfig threadConfig) {
+    public void setServer(ModbusServer server, ThreadConfig threadConfig, SessionStoreService sessionStoreService) {
         this.server = server;
         this.threadConfig = threadConfig;
+        this.sessionStoreService = sessionStoreService;
     }
 
 
@@ -37,6 +41,9 @@ public abstract class ModbusRequestHandler extends SimpleChannelInboundHandler<M
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         server.removeClient(ctx.channel());
+        logger.info("移除一个客户端连接：" + ctx.channel().id().asShortText());
+        //todo 待写业务逻辑
+//        sessionStoreService.remove(ctx.channel().id().asShortText());
     }
 
     private static byte[] bytes = {(byte) 0xf8, 0x04, 0x00, 0x00, 0x00, 0x0a, 0x64, 0x64};
@@ -44,23 +51,10 @@ public abstract class ModbusRequestHandler extends SimpleChannelInboundHandler<M
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         server.addClient(ctx.channel());
-//        threadConfig.getAsyncExecutor().execute(() -> {
-//            while (true) {
-//                try {
-//                    Thread.sleep(1000 * 3);
-//                    ctx.writeAndFlush(Unpooled.copiedBuffer(bytes)).addListener(i -> {
-//                        if (!i.isSuccess()) {
-//                            ctx.channel().close();
-//                            ctx.close();
-//                        }
-//                    });
-//                } catch (InterruptedException e) {
-//                    ctx.channel().close();
-//                    ctx.close();
-//                    break;
-//                }
-//            }
-//        });
+        logger.info("新增一个客户端连接：" + ctx.channel().id().asShortText());
+        //todo 待写业务逻辑
+//        SessionStore sessionStore = new SessionStore(ctx.channel().id().asShortText(), ctx.channel(), false, ctx);
+//        sessionStoreService.put(ctx.channel().id().asShortText(), sessionStore);
     }
 
     @Override
