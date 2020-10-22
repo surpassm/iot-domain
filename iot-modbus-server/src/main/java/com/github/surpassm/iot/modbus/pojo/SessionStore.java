@@ -11,6 +11,7 @@ import java.io.Serializable;
 
 /**
  * 会话存储
+ * @author AOC
  */
 public class SessionStore implements Serializable {
 
@@ -20,13 +21,14 @@ public class SessionStore implements Serializable {
 
 	private boolean cleanSession;
 
-	private ChannelHandlerContext ctx;
+	private ModbusFunction function;
 
-	public SessionStore(String clientId, Channel channel, boolean cleanSession, ChannelHandlerContext ctx) {
+
+	public SessionStore(String clientId, Channel channel, boolean cleanSession, ModbusFunction function) {
 		this.clientId = clientId;
 		this.channel = channel;
 		this.cleanSession = cleanSession;
-		this.ctx = ctx;
+		this.function = function;
 	}
 
 	public String getClientId() {
@@ -56,12 +58,11 @@ public class SessionStore implements Serializable {
 		return this;
 	}
 
-	public ChannelHandlerContext getCtx() {
-		return ctx;
+	public ModbusFunction getFunction() {
+		return function;
 	}
 
-	public SessionStore setCtx(ChannelHandlerContext ctx) {
-		this.ctx = ctx;
-		return this;
+	public void setFunction(ModbusFunction function) {
+		this.function = function;
 	}
 }

@@ -43,7 +43,7 @@ public abstract class ModbusRequestHandler extends SimpleChannelInboundHandler<M
         server.removeClient(ctx.channel());
         logger.info("移除一个客户端连接：" + ctx.channel().id().asShortText());
         //todo 待写业务逻辑
-//        sessionStoreService.remove(ctx.channel().id().asShortText());
+        sessionStoreService.remove(ctx.channel().id().asShortText());
     }
 
     private static byte[] bytes = {(byte) 0xf8, 0x04, 0x00, 0x00, 0x00, 0x0a, 0x64, 0x64};
@@ -53,8 +53,8 @@ public abstract class ModbusRequestHandler extends SimpleChannelInboundHandler<M
         server.addClient(ctx.channel());
         logger.info("新增一个客户端连接：" + ctx.channel().id().asShortText());
         //todo 待写业务逻辑
-//        SessionStore sessionStore = new SessionStore(ctx.channel().id().asShortText(), ctx.channel(), false, ctx);
-//        sessionStoreService.put(ctx.channel().id().asShortText(), sessionStore);
+        SessionStore sessionStore = new SessionStore(ctx.channel().id().asShortText(), ctx.channel(), false, null);
+        sessionStoreService.put(ctx.channel().id().asShortText(), sessionStore);
     }
 
     @Override

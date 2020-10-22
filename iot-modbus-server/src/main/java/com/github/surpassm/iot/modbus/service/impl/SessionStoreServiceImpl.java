@@ -37,4 +37,9 @@ public class SessionStoreServiceImpl implements SessionStoreService {
 	public void remove(String clientId) {
 		sessionCache.remove(clientId);
 	}
+
+	@Override
+	public Map<String, SessionStore> findAll() {
+		return sessionCache;
+	}
 }
