@@ -27,10 +27,12 @@
     </properties>
 
     <modules>
+        <module>iot-start-center</module>
         <module>iot-gateway</module>
         <module>iot-mqtt-server</module>
         <module>iot-modbus-server</module>
         <module>iot-driver</module>
+        <module>iot-xph-server</module>
     </modules>
 
     <dependencyManagement>
