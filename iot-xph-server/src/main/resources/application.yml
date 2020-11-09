@@ -1,7 +1,7 @@
 
 spring:
   application:
-    name: iot-modbus
+    name: iot-modbus-xph
   profiles:
     active: dev
 
@@ -19,7 +19,7 @@ spring:
         port: 8721
   modbus:
     server:
-      id: modbus-broker-01
+      id: modbus-xph-broker-01
       # 端口号
       tcp-port: 9000
       # 心跳时间(秒)

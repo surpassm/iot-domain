@@ -1,15 +1,20 @@
 package com.github.surpassm.iot.modbus.controller;
 
+import com.github.surpassm.iot.modbus.func.ModbusError;
 import com.github.surpassm.iot.modbus.pojo.ModbusFrame;
+import com.github.surpassm.iot.modbus.pojo.ModbusFunction;
 import com.github.surpassm.iot.modbus.pojo.ModbusHeader;
 import com.github.surpassm.iot.modbus.pojo.SessionStore;
 import com.github.surpassm.iot.modbus.service.SessionStoreService;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.nio.ByteBuffer;
 
 /**
  * @author mc
@@ -17,7 +22,7 @@ import javax.validation.Valid;
  * Version 1.0
  * Description
  */
-
+@Slf4j
 @CrossOrigin
 @RestController
 @RequestMapping("/test/")
@@ -31,10 +36,15 @@ public class TestController {
         return sessionStoreService.findAll();
     }
     @PostMapping("send")
-    public void send(String clientId) {
-        byte[] bytes = {(byte) 0xf8, 0x04, 0x00, 0x00, 0x00, 0x0a, 0x64, 0x64};
+    public void send(String clientId,byte[] bytes) {
         SessionStore sessionStore = sessionStoreService.get(clientId);
-        sessionStore.getChannel().writeAndFlush(bytes);
+        sessionStore.getChannel().writeAndFlush(Unpooled.copiedBuffer(bytes)).addListener(i -> {
+            if (i.isSuccess()) {
+                log.info("发送成功");
+            }else {
+                log.info("发送失败");
+            }
+        });
 
     }
 
