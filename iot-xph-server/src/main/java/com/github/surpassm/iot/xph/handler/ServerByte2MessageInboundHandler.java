@@ -62,6 +62,11 @@ public class ServerByte2MessageInboundHandler extends ChannelInboundHandlerAdapt
         ByteBuf byteBuf = (ByteBuf) msg;
         byte[] bt1 = new byte[byteBuf.readableBytes()];
         byteBuf.readBytes(bt1);
+        StringBuilder builder = new StringBuilder();
+        for (byte b : bt1) {
+            builder.append(b).append(" ");
+        }
+        log.info("客户端返回：{}",builder.toString());
         super.channelRead(ctx, msg);
     }
 }
