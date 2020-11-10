@@ -42,4 +42,9 @@ public class SessionStoreServiceImpl implements SessionStoreService {
 	public Map<String, SessionStore> findAll() {
 		return sessionCache;
 	}
+
+	@Override
+	public int size() {
+		return sessionCache.size();
+	}
 }

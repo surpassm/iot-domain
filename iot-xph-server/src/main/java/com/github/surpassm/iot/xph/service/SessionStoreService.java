@@ -38,6 +38,9 @@ public interface SessionStoreService {
 	 */
 	Map<String, SessionStore> findAll();
 
-
-
+	/**
+	 * 集合大小
+	 * @return 数值
+	 */
+    int size();
 }

@@ -35,6 +35,7 @@ public class ServerByte2MessageInboundHandler extends ChannelInboundHandlerAdapt
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
         super.channelRegistered(ctx);
     }
+
     @Override
     public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
         super.channelUnregistered(ctx);
@@ -42,18 +43,26 @@ public class ServerByte2MessageInboundHandler extends ChannelInboundHandlerAdapt
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        log.info("新增一个客户端连接：" + ctx.channel().id().asShortText());
+        String channelShortId = ctx.channel().id().asShortText();
+        String socketAddress = ctx.channel().remoteAddress().toString();
+        String s = socketAddress.split(":")[0];
+        String address = s.substring(1);
+        log.info("新增客户端连接：{},{}", channelShortId, address);
         //todo 待写业务逻辑
-        SessionStore sessionStore = new SessionStore(ctx.channel().id().asShortText(), ctx.channel(), false);
-        sessionStoreService.put(ctx.channel().id().asShortText(), sessionStore);
+        SessionStore sessionStore = new SessionStore(channelShortId, ctx.channel(), false);
+        sessionStoreService.put(channelShortId, sessionStore);
+        log.info("当前连接数：{}", sessionStoreService.size());
         super.channelActive(ctx);
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        log.info("移除一个客户端连接：" + ctx.channel().id().asShortText());
+        String channelShortId = ctx.channel().id().asShortText();
+        log.info("移除一个客户端连接：{}", channelShortId);
         //todo 待写业务逻辑
-        sessionStoreService.remove(ctx.channel().id().asShortText());
+        if (sessionStoreService.containsKey(channelShortId)) {
+            sessionStoreService.remove(channelShortId);
+        }
         super.channelInactive(ctx);
     }
 
@@ -66,7 +75,7 @@ public class ServerByte2MessageInboundHandler extends ChannelInboundHandlerAdapt
         for (byte b : bt1) {
             builder.append(b).append(" ");
         }
-        log.info("客户端返回：{}",builder.toString());
+        log.info("客户端返回：{}", builder.toString());
         super.channelRead(ctx, msg);
     }
 }
