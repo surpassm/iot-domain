@@ -10,6 +10,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author mc
@@ -45,6 +46,9 @@ public class ServerByte2MessageInboundHandler extends ChannelInboundHandlerAdapt
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         String channelShortId = ctx.channel().id().asShortText();
         String socketAddress = ctx.channel().remoteAddress().toString();
+        if(StringUtils.isEmpty(socketAddress)){
+            throw new RuntimeException("socketAddress error");
+        }
         String s = socketAddress.split(":")[0];
         String address = s.substring(1);
         log.info("新增客户端连接：{},{}", channelShortId, address);
